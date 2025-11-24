@@ -653,6 +653,16 @@ export class Game {
 
     if (saveData) {
       this.stateManager.deserialize(saveData);
+
+      // IMPORTANT: If game was playing when saved, set it to menu
+      // The maze/player are not saved, so we can't render them
+      // User must click "Continue" to regenerate the level
+      const gameState = this.stateManager.get('gameState');
+      if (gameState === 'playing' || gameState === 'paused') {
+        console.log('Game was', gameState, '- setting to menu. Click Continue to resume.');
+        this.stateManager.set('gameState', 'menu');
+      }
+
       this.ui.continueBtn.style.display = 'block';
     } else {
       this.ui.continueBtn.style.display = 'none';
