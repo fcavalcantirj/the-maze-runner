@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Endless progressive-difficulty maze game">
+  <title>The Maze Runner</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="app">
+    <div id="game-container">
+      <canvas id="game-canvas"></canvas>
+    </div>
+
+    <div id="hud">
+      <div class="hud-top">
+        <div id="level-display">Level: <span id="level-number">1</span></div>
+        <div id="score-display">Score: <span id="score-number">0</span></div>
+      </div>
+      <div class="hud-bottom">
+        <button id="pause-btn" class="game-btn">⏸ Pause</button>
+        <button id="reset-btn" class="game-btn">🔄 Restart</button>
+      </div>
+    </div>
+
+    <div id="menu" class="screen active">
+      <h1>The Maze Runner</h1>
+      <div class="menu-buttons">
+        <button id="start-btn" class="menu-btn">Start Game</button>
+        <button id="continue-btn" class="menu-btn" style="display: none;">Continue</button>
+        <div id="high-score-display">High Score: <span id="high-score">0</span></div>
+      </div>
+    </div>
+
+    <div id="pause-screen" class="screen">
+      <h2>Paused</h2>
+      <div class="menu-buttons">
+        <button id="resume-btn" class="menu-btn">Resume</button>
+        <button id="restart-btn" class="menu-btn">Restart Level</button>
+        <button id="main-menu-btn" class="menu-btn">Main Menu</button>
+      </div>
+    </div>
+
+    <div id="gameover-screen" class="screen">
+      <h2>Game Over</h2>
+      <div id="final-stats">
+        <p>Level Reached: <span id="final-level">1</span></p>
+        <p>Final Score: <span id="final-score">0</span></p>
+        <p id="new-highscore" style="display: none;">🎉 New High Score!</p>
+      </div>
+      <div class="menu-buttons">
+        <button id="retry-btn" class="menu-btn">Try Again</button>
+        <button id="menu-btn" class="menu-btn">Main Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>
