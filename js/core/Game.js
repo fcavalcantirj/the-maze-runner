@@ -104,13 +104,18 @@ export class Game {
 
     // If game is playing or paused, redraw the maze and player
     if ((gameState === 'playing' || gameState === 'paused') && this.currentLevel && this.player) {
-      // Clear and redraw
-      this.renderSystem.clear();
-      this.renderSystem.renderMaze(this.currentLevel.getMaze());
-      this.renderSystem.renderPlayer(this.player);
+      // Ensure canvas is properly sized
+      this.resizeCanvas();
+
+      // Force a render cycle
+      requestAnimationFrame(() => {
+        this.renderSystem.clear();
+        this.renderSystem.renderMaze(this.currentLevel.getMaze());
+        this.renderSystem.renderPlayer(this.player);
+      });
 
       // Restart game loop if it was playing
-      if (gameState === 'playing') {
+      if (gameState === 'playing' && !this.gameLoop.isRunning()) {
         this.gameLoop.start();
       }
     }
