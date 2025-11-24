@@ -68,20 +68,21 @@ export class Game {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    // Account for HUD elements to get available canvas space
-    // Top HUD: Level/Score badges (~40-50px with margins)
-    // Bottom HUD: Pause/Restart buttons (~70-80px with margins)
-    const topHudHeight = 50;
-    const bottomHudHeight = 80;
-    const totalHudHeight = topHudHeight + bottomHudHeight;
+    // Since HUD is absolutely positioned OVER the canvas,
+    // we need the canvas to be SMALLER to leave room for buttons
+    // Calculate maximum canvas size that leaves room for HUD
 
-    // Calculate available space
-    const availableWidth = viewportWidth;
-    const availableHeight = viewportHeight - totalHudHeight;
+    // Use width as primary constraint (square canvas)
+    let size = viewportWidth - 20; // 10px padding each side
 
-    // Make canvas square, using the smaller available dimension
-    // Add small padding (10px) for visual breathing room
-    const size = Math.min(availableWidth, availableHeight) - 10;
+    // But ensure we leave enough vertical space for bottom buttons
+    // Bottom buttons need ~100px (button height + margins + safe area)
+    const maxHeight = viewportHeight - 100;
+
+    // Canvas can't be taller than remaining vertical space
+    if (size > maxHeight) {
+      size = maxHeight;
+    }
 
     // Ensure minimum size for playability
     const finalSize = Math.max(size, 280);
