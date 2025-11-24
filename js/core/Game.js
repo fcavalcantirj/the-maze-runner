@@ -375,6 +375,12 @@ export class Game {
   startNewGame() {
     this.stateManager.startNewGame();
     this.generateLevel(1);
+
+    // Force an immediate render before starting loop
+    this.renderSystem.clear();
+    this.renderSystem.renderMaze(this.currentLevel.getMaze());
+    this.renderSystem.renderPlayer(this.player);
+
     this.gameLoop.start();
   }
 
@@ -405,6 +411,12 @@ export class Game {
     const currentLevel = this.stateManager.get('currentLevel');
     this.stateManager.set('gameState', 'playing');
     this.generateLevel(currentLevel);
+
+    // Force an immediate render before starting loop
+    this.renderSystem.clear();
+    this.renderSystem.renderMaze(this.currentLevel.getMaze());
+    this.renderSystem.renderPlayer(this.player);
+
     this.gameLoop.start();
   }
 
