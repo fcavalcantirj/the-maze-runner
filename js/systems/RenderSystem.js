@@ -79,15 +79,33 @@ export class RenderSystem {
 
     this.ctx.fill();
 
-    // Highlight exit cell with filled square and glow
+    // Highlight exit with enhanced animated glow
     const exitPos = mazeGenerator.getExitPosition();
     const exitCenterX = exitPos.x * this.cellSize + this.cellSize / 2;
     const exitCenterY = exitPos.y * this.cellSize + this.cellSize / 2;
-    const exitSize = this.cellSize * 0.6;
+    const exitSize = this.cellSize * 0.5;
 
     this.ctx.save();
+
+    // Outer pulsing glow
+    const time = Date.now() * 0.002;
+    const pulseSize = exitSize * (1.8 + Math.sin(time) * 0.3);
+    const glowGradient = this.ctx.createRadialGradient(
+      exitCenterX, exitCenterY, exitSize * 0.5,
+      exitCenterX, exitCenterY, pulseSize
+    );
+    glowGradient.addColorStop(0, 'rgba(255, 170, 0, 0.6)');
+    glowGradient.addColorStop(0.5, 'rgba(255, 170, 0, 0.3)');
+    glowGradient.addColorStop(1, 'rgba(255, 170, 0, 0)');
+
+    this.ctx.fillStyle = glowGradient;
+    this.ctx.beginPath();
+    this.ctx.arc(exitCenterX, exitCenterY, pulseSize, 0, Math.PI * 2);
+    this.ctx.fill();
+
+    // Main exit square with strong glow
     this.ctx.shadowColor = EXIT_COLOR;
-    this.ctx.shadowBlur = 20;
+    this.ctx.shadowBlur = 30;
     this.ctx.fillStyle = EXIT_COLOR;
     this.ctx.fillRect(
       exitCenterX - exitSize / 2,
@@ -95,6 +113,27 @@ export class RenderSystem {
       exitSize,
       exitSize
     );
+
+    // Inner bright square for depth
+    this.ctx.shadowBlur = 0;
+    const innerGradient = this.ctx.createLinearGradient(
+      exitCenterX - exitSize / 2,
+      exitCenterY - exitSize / 2,
+      exitCenterX + exitSize / 2,
+      exitCenterY + exitSize / 2
+    );
+    innerGradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
+    innerGradient.addColorStop(0.5, 'rgba(255, 200, 0, 0.4)');
+    innerGradient.addColorStop(1, 'rgba(255, 170, 0, 0)');
+
+    this.ctx.fillStyle = innerGradient;
+    this.ctx.fillRect(
+      exitCenterX - exitSize / 2,
+      exitCenterY - exitSize / 2,
+      exitSize,
+      exitSize
+    );
+
     this.ctx.restore();
 
     this.ctx.restore();

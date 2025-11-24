@@ -45,7 +45,7 @@ export class Player extends Entity {
   }
 
   /**
-   * Render player as a circle
+   * Render player with enhanced glow effects
    */
   render(ctx, cellSize) {
     if (!this.active) return;
@@ -55,12 +55,40 @@ export class Player extends Entity {
 
     ctx.save();
 
-    // Draw glow effect
-    ctx.shadowColor = this.color;
-    ctx.shadowBlur = 15;
+    // Outer glow ring
+    const gradient = ctx.createRadialGradient(pixelPos.x, pixelPos.y, radius * 0.5, pixelPos.x, pixelPos.y, radius * 2.5);
+    gradient.addColorStop(0, 'rgba(0, 255, 136, 0.5)');
+    gradient.addColorStop(0.4, 'rgba(0, 255, 136, 0.2)');
+    gradient.addColorStop(1, 'rgba(0, 255, 136, 0)');
 
-    // Draw player circle
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(pixelPos.x, pixelPos.y, radius * 2.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Main player circle with strong glow
+    ctx.shadowBlur = 25;
+    ctx.shadowColor = this.color;
     ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(pixelPos.x, pixelPos.y, radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Inner highlight for 3D effect
+    const highlightGradient = ctx.createRadialGradient(
+      pixelPos.x - radius * 0.3,
+      pixelPos.y - radius * 0.3,
+      0,
+      pixelPos.x,
+      pixelPos.y,
+      radius
+    );
+    highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+    highlightGradient.addColorStop(0.4, 'rgba(255, 255, 255, 0.3)');
+    highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = highlightGradient;
     ctx.beginPath();
     ctx.arc(pixelPos.x, pixelPos.y, radius, 0, Math.PI * 2);
     ctx.fill();
