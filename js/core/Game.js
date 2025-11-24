@@ -58,6 +58,33 @@ export class Game {
 
     // Handle window resize
     window.addEventListener('resize', () => this.resizeCanvas());
+
+    // Easter egg: Check for ?level=X in URL
+    this.checkLevelOverride();
+  }
+
+  /**
+   * Easter egg: Allow jumping to any level via URL parameter
+   * Usage: ?level=25 or ?level=100
+   */
+  checkLevelOverride() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const levelParam = urlParams.get('level');
+
+    if (levelParam) {
+      const level = parseInt(levelParam, 10);
+      if (!isNaN(level) && level > 0 && level <= 200) {
+        console.log(`🎮 Easter egg activated! Jumping to level ${level}`);
+        this.stateManager.set('currentLevel', level);
+
+        // Update UI to show continue button
+        if (this.ui.continueBtn) {
+          this.ui.continueBtn.style.display = 'block';
+        }
+      } else {
+        console.warn('Invalid level parameter. Must be between 1-200');
+      }
+    }
   }
 
   /**
