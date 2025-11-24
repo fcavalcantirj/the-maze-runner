@@ -71,19 +71,30 @@ export class Game {
    * Fixes bug where canvas goes black when returning to the game
    */
   setupVisibilityHandlers() {
+    // Handle canvas context lost/restored
+    this.canvas.addEventListener('webglcontextlost', (e) => {
+      console.log('Canvas context lost');
+      e.preventDefault();
+    });
+
+    this.canvas.addEventListener('webglcontextrestored', () => {
+      console.log('Canvas context restored - reinitializing');
+      this.forceRedraw();
+    });
+
     // Handle visibility change
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
         // Page became visible again - force a render
         console.log('Page visible - redrawing canvas');
-        this.forceRedraw();
+        setTimeout(() => this.forceRedraw(), 100);
       }
     });
 
     // Handle focus events (for iOS Safari)
     window.addEventListener('focus', () => {
       console.log('Window focused - redrawing canvas');
-      this.forceRedraw();
+      setTimeout(() => this.forceRedraw(), 100);
     });
 
     // Handle page show event (for back/forward navigation)
@@ -91,8 +102,14 @@ export class Game {
       if (event.persisted) {
         // Page was restored from back/forward cache
         console.log('Page restored from cache - redrawing canvas');
-        this.forceRedraw();
+        setTimeout(() => this.forceRedraw(), 100);
       }
+    });
+
+    // Handle resume event (Android)
+    document.addEventListener('resume', () => {
+      console.log('App resumed - redrawing canvas');
+      setTimeout(() => this.forceRedraw(), 100);
     });
   }
 
@@ -104,20 +121,30 @@ export class Game {
 
     // If game is playing or paused, redraw the maze and player
     if ((gameState === 'playing' || gameState === 'paused') && this.currentLevel && this.player) {
-      // Ensure canvas is properly sized
-      this.resizeCanvas();
+      console.log('Force redraw - gameState:', gameState, 'level:', this.stateManager.get('currentLevel'));
 
-      // Force a render cycle
+      // Re-initialize canvas and rendering system
+      const size = Math.min(window.innerWidth, window.innerHeight) - 20;
+      const finalSize = Math.max(size, 280);
+      this.renderSystem.init(finalSize, finalSize);
+
+      // Force a render cycle with a slight delay to ensure canvas is ready
       requestAnimationFrame(() => {
-        this.renderSystem.clear();
-        this.renderSystem.renderMaze(this.currentLevel.getMaze());
-        this.renderSystem.renderPlayer(this.player);
+        requestAnimationFrame(() => {
+          this.renderSystem.clear();
+          this.renderSystem.renderMaze(this.currentLevel.getMaze());
+          this.renderSystem.renderPlayer(this.player);
+          console.log('Redraw complete');
+        });
       });
 
       // Restart game loop if it was playing
       if (gameState === 'playing' && !this.gameLoop.isRunning()) {
+        console.log('Restarting game loop');
         this.gameLoop.start();
       }
+    } else {
+      console.log('Cannot redraw - gameState:', gameState, 'hasLevel:', !!this.currentLevel, 'hasPlayer:', !!this.player);
     }
   }
 
