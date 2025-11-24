@@ -9,6 +9,12 @@ Endless progressive-difficulty maze game with mobile-first touch controls, built
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
 
+## Deployment
+- **DO NOT** manually deploy to Vercel using `vercel --prod`
+- Vercel is configured to auto-deploy on git push to `main` branch
+- Simply commit and push changes to trigger automatic deployment
+- Deployment URL: https://the-maze-runner-fgp3ni3a1-flowcoders.vercel.app
+
 ## Code Style Requirements
 - Use ES6 modules (import/export)
 - Separate game logic from rendering
