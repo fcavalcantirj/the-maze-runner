@@ -97,6 +97,8 @@ export class Game {
     this.ui = {
       levelNumber: document.getElementById('level-number'),
       scoreNumber: document.getElementById('score-number'),
+      timer: document.getElementById('timer'),
+      difficultyBar: document.getElementById('difficulty-bar'),
       highScore: document.getElementById('high-score'),
       finalLevel: document.getElementById('final-level'),
       finalScore: document.getElementById('final-score'),
@@ -127,6 +129,9 @@ export class Game {
     this.ui.mainMenuBtn.addEventListener('click', () => this.showMainMenu());
     this.ui.retryBtn.addEventListener('click', () => this.startNewGame());
     this.ui.menuBtn.addEventListener('click', () => this.showMainMenu());
+
+    // Start timer update loop
+    this.startTimerUpdate();
   }
 
   /**
@@ -135,6 +140,7 @@ export class Game {
   setupStateObservers() {
     this.stateManager.subscribe('currentLevel', (level) => {
       this.ui.levelNumber.textContent = level;
+      this.updateDifficultyMeter(level);
     });
 
     this.stateManager.subscribe('score', (score) => {
@@ -149,6 +155,57 @@ export class Game {
     this.stateManager.subscribe('gameState', (state) => {
       this.updateScreenVisibility(state);
     });
+  }
+
+  /**
+   * Start timer update interval
+   */
+  startTimerUpdate() {
+    setInterval(() => {
+      const gameState = this.stateManager.get('gameState');
+      if (gameState === 'playing') {
+        const startTime = this.stateManager.get('levelStartTime');
+        const elapsed = Date.now() - startTime;
+        this.updateTimer(elapsed);
+      }
+    }, 100); // Update every 100ms for smooth display
+  }
+
+  /**
+   * Update timer display
+   */
+  updateTimer(milliseconds) {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    this.ui.timer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  /**
+   * Update difficulty meter based on level
+   */
+  updateDifficultyMeter(level) {
+    // Calculate difficulty percentage (0-100)
+    // Tier 1: 1-10 = 0-20%
+    // Tier 2: 11-25 = 20-40%
+    // Tier 3: 26-50 = 40-60%
+    // Tier 4: 51-75 = 60-80%
+    // Tier 5: 76+ = 80-100%
+
+    let percentage;
+    if (level <= 10) {
+      percentage = (level / 10) * 20;
+    } else if (level <= 25) {
+      percentage = 20 + ((level - 10) / 15) * 20;
+    } else if (level <= 50) {
+      percentage = 40 + ((level - 25) / 25) * 20;
+    } else if (level <= 75) {
+      percentage = 60 + ((level - 50) / 25) * 20;
+    } else {
+      percentage = 80 + Math.min(((level - 75) / 25) * 20, 20);
+    }
+
+    this.ui.difficultyBar.style.width = `${Math.min(percentage, 100)}%`;
   }
 
   /**

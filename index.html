@@ -8,20 +8,59 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+  <!-- Particle Background Effects -->
+  <div class="particles"></div>
+
   <div id="app">
-    <div id="game-container">
-      <canvas id="game-canvas"></canvas>
+    <!-- Header HUD -->
+    <div class="hud">
+      <div class="hud-left">
+        <div class="stat-card">
+          <span class="stat-label">LEVEL</span>
+          <span class="stat-value" id="level-number">1</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">SCORE</span>
+          <span class="stat-value" id="score-number">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">TIMER</span>
+          <span class="stat-value" id="timer">0:00</span>
+        </div>
+      </div>
+
+      <div class="game-title">
+        <span class="title-glow">THE MAZE</span>
+        <span class="title-accent">RUNNER</span>
+      </div>
+
+      <div class="hud-right">
+        <div class="stat-card">
+          <span class="stat-label">DIFFICULTY</span>
+          <div class="difficulty-meter">
+            <div class="difficulty-bar" id="difficulty-bar"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div id="hud">
-      <div class="hud-top">
-        <div id="level-display">Level: <span id="level-number">1</span></div>
-        <div id="score-display">Score: <span id="score-number">0</span></div>
+    <!-- Game Canvas Container -->
+    <div id="game-container">
+      <div class="canvas-border">
+        <canvas id="game-canvas"></canvas>
       </div>
-      <div class="hud-bottom">
-        <button id="pause-btn" class="game-btn">⏸ Pause</button>
-        <button id="reset-btn" class="game-btn">🔄 Restart</button>
-      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="control-btn primary" id="pause-btn">
+        <span class="btn-icon">⏸</span>
+        <span>PAUSE</span>
+      </button>
+      <button class="control-btn secondary" id="reset-btn">
+        <span class="btn-icon">🔄</span>
+        <span>RESTART</span>
+      </button>
     </div>
 
     <div id="menu" class="screen active">
